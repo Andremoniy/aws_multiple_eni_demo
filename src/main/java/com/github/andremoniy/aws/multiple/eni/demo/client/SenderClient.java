@@ -70,7 +70,9 @@ public class SenderClient {
                 continue;
             }
 
-            executorService.submit(new SocketSender(queue, firstInet4Address.get(), hostsLoop.getNext(), lastChunkNumber));
+            final String nextHost = hostsLoop.getNext();
+            LOGGER.info("Binding {} to {}", networkInterface, nextHost);
+            executorService.submit(new SocketSender(queue, firstInet4Address.get(), nextHost, lastChunkNumber));
         }
 
         // The main thread sends a handshake
