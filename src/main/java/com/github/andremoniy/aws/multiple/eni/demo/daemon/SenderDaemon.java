@@ -22,7 +22,7 @@ public class SenderDaemon {
     private static final Logger LOGGER = LoggerFactory.getLogger(SenderDaemon.class);
 
     public static void main(String[] args) throws IOException {
-        final boolean fakeWritings = args.length > 1 && "fake".equals(args[0]);
+        final boolean fakeWritings = args.length > 0 && "fake".equals(args[0]);
 
         if (fakeWritings) {
             LOGGER.warn("The mode of fake writing has been enabled (no actual writing on disk will be performed)");
