@@ -28,12 +28,14 @@ class Transaction {
     private final AtomicLong lastWrittenChunkNumber = new AtomicLong(0);
 
     private final Set<DataChunk> unprocessedChunks = new HashSet<>();
+    private final boolean fakeWritings;
 
-    Transaction(final long id, final long size, final String fileName) {
+    Transaction(final long id, final long size, final String fileName, boolean fakeWritings) {
         this.id = id;
         this.size = size;
         this.fileName = fileName;
         this.lastChunkNumber = SenderTools.getLastChunkNumber(size);
+        this.fakeWritings = fakeWritings;
         try {
             this.bufferedOutputStream = new BufferedOutputStream(new FileOutputStream("/tmp/" + fileName), BLOCK_SIZE);
         } catch (FileNotFoundException e) {
@@ -89,7 +91,9 @@ class Transaction {
         } else {
             bytesToWrite = dataChunk.block;
         }
-        bufferedOutputStream.write(bytesToWrite);
+        if (!fakeWritings) {
+            bufferedOutputStream.write(bytesToWrite);
+        }
     }
 
     long getId() {

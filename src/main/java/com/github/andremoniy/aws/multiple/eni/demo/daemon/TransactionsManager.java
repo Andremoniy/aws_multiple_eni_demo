@@ -21,12 +21,18 @@ class TransactionsManager implements Runnable {
     private final BlockingQueue<DataChunk> chunksQueue = new ArrayBlockingQueue<>(100);
 
     private final AtomicBoolean running = new AtomicBoolean(true);
+    private final boolean fakeWritings;
+
+    public TransactionsManager(final boolean fakeWritings) {
+        this.fakeWritings = fakeWritings;
+    }
 
     long registerNewTransaction(final long size, final String fileName) {
         final Transaction newTransaction = new Transaction(
                 transactionCounter.getAndIncrement(),
                 size,
-                fileName
+                fileName,
+                fakeWritings
         );
         transactionMap.put(newTransaction.getId(), newTransaction);
         LOGGER.info("New file transaction started, id: {}, filename: {}, size: {}", newTransaction.getId(), fileName, size);

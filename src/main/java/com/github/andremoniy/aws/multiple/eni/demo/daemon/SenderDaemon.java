@@ -22,13 +22,14 @@ public class SenderDaemon {
     private static final Logger LOGGER = LoggerFactory.getLogger(SenderDaemon.class);
 
     public static void main(String[] args) throws IOException {
-        // 1. list of ENIs
+        final boolean fakeWritings = args.length > 1 && "fake".equals(args[0]);
+
         final List<NetworkInterface> networkInterfaces = SenderTools.getNetworkInterfaces();
 
         LOGGER.info("Found {} network interfaces", networkInterfaces.size());
 
         final var executorService = Executors.newFixedThreadPool(networkInterfaces.size() + 1);
-        final TransactionsManager transactionsManager = new TransactionsManager();
+        final TransactionsManager transactionsManager = new TransactionsManager(fakeWritings);
         executorService.submit(transactionsManager);
 
         final List<Future<?>> futures = new ArrayList<>();
