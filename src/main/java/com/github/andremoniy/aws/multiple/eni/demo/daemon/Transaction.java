@@ -10,7 +10,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static com.github.andremoniy.aws.multiple.eni.demo.util.SenderTools.BLOCK_SIZE;
@@ -26,7 +29,7 @@ class Transaction {
     private final BufferedOutputStream bufferedOutputStream;
     private final AtomicLong lastWrittenChunkNumber = new AtomicLong(0);
 
-    private final List<DataChunk> unprocessedChunks = new ArrayList<>();
+    private final Set<DataChunk> unprocessedChunks = new HashSet<>();  // ToDo: a potential place for OOM Java heap space
 
     Transaction(final long id, final long size, final String fileName) {
         this.id = id;
@@ -64,15 +67,14 @@ class Transaction {
     }
 
     private DataChunk findNextDataChunk() {
-        DataChunk dataChunkToProcess;
-        dataChunkToProcess = null;
-        for (DataChunk unprocessedDataChunk : unprocessedChunks) {
+        for (Iterator<DataChunk> iterator = unprocessedChunks.iterator(); iterator.hasNext(); ) {
+            DataChunk unprocessedDataChunk = iterator.next();
             if (unprocessedDataChunk.chunkNumber == lastWrittenChunkNumber.get() + 1) {
-                dataChunkToProcess = unprocessedDataChunk;
-                break;
+                iterator.remove();
+                return unprocessedDataChunk;
             }
         }
-        return dataChunkToProcess;
+        return null;
     }
 
     private void writeChunkToDisk(final DataChunk dataChunk) throws IOException {
