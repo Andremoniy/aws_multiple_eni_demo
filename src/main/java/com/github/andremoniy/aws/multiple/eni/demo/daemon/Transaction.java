@@ -43,10 +43,12 @@ class Transaction {
 
     synchronized boolean processDataChunk(final DataChunk dataChunk) throws IOException {
         LOGGER.info("Processing chunk #{} of file {}", dataChunk.chunkNumber, fileName);
-        if (dataChunk.chunkNumber == lastWrittenChunkNumber.get() + 1) {
+        final long expectedChunkNumber = getExpectedChunkNumber();
+        if (dataChunk.chunkNumber == expectedChunkNumber) {
             DataChunk dataChunkToProcess = dataChunk;
 
             while (dataChunkToProcess != null) {
+                LOGGER.info("Writing chunk #{} to disk", dataChunk.chunkNumber);
                 writeChunkToDisk(dataChunk);
                 lastWrittenChunkNumber.set(dataChunk.chunkNumber);
                 if (dataChunk.chunkNumber == lastChunkNumber) {
@@ -59,6 +61,7 @@ class Transaction {
                 }
             }
         } else {
+            LOGGER.info("Storing chunk #{} for late processing, expected next chunk: #{}", dataChunk.chunkNumber, expectedChunkNumber);
             try {
                 unprocessedChunks.put(dataChunk);
             } catch (InterruptedException e) {
@@ -69,10 +72,14 @@ class Transaction {
         return false;
     }
 
+    private long getExpectedChunkNumber() {
+        return lastWrittenChunkNumber.get() + 1;
+    }
+
     private DataChunk findNextDataChunk() {
         for (Iterator<DataChunk> iterator = unprocessedChunks.iterator(); iterator.hasNext(); ) {
             DataChunk unprocessedDataChunk = iterator.next();
-            if (unprocessedDataChunk.chunkNumber == lastWrittenChunkNumber.get() + 1) {
+            if (unprocessedDataChunk.chunkNumber == getExpectedChunkNumber()) {
                 iterator.remove();
                 return unprocessedDataChunk;
             }
