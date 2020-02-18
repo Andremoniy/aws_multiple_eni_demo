@@ -73,7 +73,7 @@ public class SenderClient {
 
         // The main thread sends a handshake
 
-        LOGGER.info("Starting negotiation with the server...§");
+        LOGGER.info("Starting negotiation with the server...");
         try (var bufferedInputStream = new BufferedInputStream(
                 new FileInputStream(file),
                 SenderTools.BLOCK_SIZE
