@@ -86,5 +86,6 @@ class SocketListener implements Runnable {
             // To say that we failed to process this transaction
             dataOutputStream.writeLong(-1L);
         }
+        dataOutputStream.flush();
     }
 }

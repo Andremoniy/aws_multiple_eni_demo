@@ -136,6 +136,7 @@ public class SenderClient {
             dataOutputStream.writeLong(0); // start a handshake
             dataOutputStream.writeLong(file.length());
             dataOutputStream.writeUTF(file.getName());
+            dataOutputStream.flush();
 
             LOGGER.info("Waiting for transaction ID...");
             // read transaction id
@@ -190,6 +191,7 @@ public class SenderClient {
                     dataOutputStream.writeLong(dataChunk.transactionId);
                     dataOutputStream.writeLong(dataChunk.chunkNumber);
                     dataOutputStream.write(dataChunk.block);
+                    dataOutputStream.flush();
                 }
             } catch (InterruptedException e) {
                 LOGGER.error(e.getMessage(), e);
