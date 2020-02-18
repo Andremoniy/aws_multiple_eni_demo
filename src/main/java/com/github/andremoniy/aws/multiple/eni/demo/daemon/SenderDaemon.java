@@ -24,6 +24,10 @@ public class SenderDaemon {
     public static void main(String[] args) throws IOException {
         final boolean fakeWritings = args.length > 1 && "fake".equals(args[0]);
 
+        if (fakeWritings) {
+            LOGGER.warn("The mode of fake writing has been enabled (no actual writing on disk will be performed)");
+        }
+
         final List<NetworkInterface> networkInterfaces = SenderTools.getNetworkInterfaces();
 
         LOGGER.info("Found {} network interfaces", networkInterfaces.size());
