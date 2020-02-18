@@ -83,8 +83,7 @@ public class SenderClient {
                 SenderTools.BLOCK_SIZE
         )) {
             final long startTime = System.nanoTime();
-            final long transactionId;
-            transactionId = handShakeAndGetTxId(file, hostsLoop);
+            final long transactionId = handShakeAndGetTxId(file, hostsLoop);
 
             if (transactionId <= 0) {
                 LOGGER.error("Received {} as a transaction id which means an error on server side", transactionId);
@@ -130,7 +129,6 @@ public class SenderClient {
     }
 
     private static long handShakeAndGetTxId(final File file, final Loop<String> hostsLoop) throws IOException {
-        long transactionId;
         try (Socket socket = new Socket(hostsLoop.getNext(), SenderTools.PORT);
              var dataOutputStream = new DataOutputStream(socket.getOutputStream());
              var dataInputStream = new DataInputStream(socket.getInputStream())) {
@@ -138,9 +136,11 @@ public class SenderClient {
             dataOutputStream.writeLong(0); // start a handshake
             dataOutputStream.writeLong(file.length());
             dataOutputStream.writeUTF(file.getName());
-            transactionId = dataInputStream.readLong();
+
+            LOGGER.info("Waiting for transaction ID...");
+            // read transaction id
+            return dataInputStream.readLong();
         }
-        return transactionId;
     }
 
     private static Loop<String> getHostsLoopFromEC2Instance(final String ec2InstanceId) {

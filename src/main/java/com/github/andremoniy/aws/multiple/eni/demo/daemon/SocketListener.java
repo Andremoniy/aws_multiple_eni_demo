@@ -74,6 +74,7 @@ class SocketListener implements Runnable {
     }
 
     private void handshake(final DataOutputStream dataOutputStream, final DataInputStream dataInputStream) throws IOException {
+        LOGGER.info("Starting a handshake...");
         final long size = dataInputStream.readLong();
         final String fileName = dataInputStream.readUTF();
         LOGGER.info("Starting a new transaction for a file of size {} and name {}", size, fileName);
