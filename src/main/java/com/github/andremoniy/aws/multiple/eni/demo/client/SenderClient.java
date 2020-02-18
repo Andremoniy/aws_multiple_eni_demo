@@ -60,6 +60,8 @@ public class SenderClient {
         final ExecutorService executorService = Executors.newFixedThreadPool(networkInterfaces.size());
         final BlockingQueue<DataChunk> queue = new ArrayBlockingQueue<>(100);
 
+        final long lastChunkNumber = SenderTools.getLastChunkNumber(file.length());
+
         for (NetworkInterface networkInterface : networkInterfaces) {
             final Optional<InetAddress> firstInet4Address = SenderTools.getInet4Address(networkInterface);
 
@@ -68,7 +70,7 @@ public class SenderClient {
                 continue;
             }
 
-            executorService.submit(new SocketSender(queue, firstInet4Address.get(), hostsLoop.getNext()));
+            executorService.submit(new SocketSender(queue, firstInet4Address.get(), hostsLoop.getNext(), lastChunkNumber));
         }
 
         // The main thread sends a handshake
@@ -89,7 +91,6 @@ public class SenderClient {
 
             LOGGER.info("A handshake initialised, transactionId: {}", transactionId);
 
-            final long lastChunkNumber = SenderTools.getLastChunkNumber(file.length());
             LOGGER.info("File will be split on {} chunks", lastChunkNumber);
             for (long chunkNumber = 1; chunkNumber <= lastChunkNumber; chunkNumber++) {
 
@@ -117,9 +118,10 @@ public class SenderClient {
             }
 
             final long uploadingDurationInNanos = System.nanoTime() - startTime;
-            LOGGER.info("Uploading time: {} ns", uploadingDurationInNanos);
-            final double speed = ((double) file.length() * 8 / uploadingDurationInNanos) * TimeUnit.SECONDS.toNanos(1) / 1024 / 1024 / 1024;
-            LOGGER.info("Throughput: {} GBs", speed);
+            LOGGER.info("Uploading time: {} ns, {} s", uploadingDurationInNanos, TimeUnit.NANOSECONDS.toSeconds(uploadingDurationInNanos));
+            final double speedMBs = ((double) file.length() * 8 / uploadingDurationInNanos) * TimeUnit.SECONDS.toNanos(1) / 1024 / 1024;
+            final double speedGBs = speedMBs / 1024;
+            LOGGER.info("Throughput: {} MBs, {} GBs", speedMBs, speedGBs);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -160,11 +162,13 @@ public class SenderClient {
         private final BlockingQueue<DataChunk> queue;
         private final InetAddress firstInet4Address;
         private final String host;
+        private final long lastChunkNumber;
 
-        SocketSender(final BlockingQueue<DataChunk> queue, final InetAddress firstInet4Address, final String host) {
+        SocketSender(final BlockingQueue<DataChunk> queue, final InetAddress firstInet4Address, final String host, final long lastChunkNumber) {
             this.queue = queue;
             this.firstInet4Address = firstInet4Address;
             this.host = host;
+            this.lastChunkNumber = lastChunkNumber;
         }
 
         @Override
@@ -176,10 +180,10 @@ public class SenderClient {
                     final DataChunk dataChunk = queue.take();
                     if (dataChunk == END_OF_QUEUE) {
                         queue.put(END_OF_QUEUE);
-                        LOGGER.info("Received end of queue marker, terminating socker sender for {}", firstInet4Address);
+                        LOGGER.info("Received end of queue marker, terminating socket sender for {}", firstInet4Address);
                         break;
                     }
-                    LOGGER.info("Sending data chunk #{}", dataChunk.chunkNumber);
+                    LOGGER.debug("Sending data chunk #{}/{}", dataChunk.chunkNumber, lastChunkNumber);
 
                     dataOutputStream.writeLong(dataChunk.transactionId);
                     dataOutputStream.writeLong(dataChunk.chunkNumber);

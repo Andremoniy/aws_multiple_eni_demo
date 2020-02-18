@@ -42,13 +42,13 @@ class Transaction {
     }
 
     synchronized void processDataChunk(final DataChunk dataChunk) throws IOException {
-        LOGGER.info("Processing chunk #{} of file {}", dataChunk.chunkNumber, fileName);
+        LOGGER.debug("Processing chunk #{} of file {}", dataChunk.chunkNumber, fileName);
         final long expectedChunkNumber = getExpectedChunkNumber();
         if (dataChunk.chunkNumber == expectedChunkNumber) {
             DataChunk dataChunkToProcess = dataChunk;
 
             while (dataChunkToProcess != null) {
-                LOGGER.info("Writing chunk #{} to disk", dataChunkToProcess.chunkNumber);
+                LOGGER.debug("Writing chunk #{} to disk", dataChunkToProcess.chunkNumber);
                 writeChunkToDisk(dataChunkToProcess);
                 lastWrittenChunkNumber.set(dataChunkToProcess.chunkNumber);
                 if (dataChunkToProcess.chunkNumber == lastChunkNumber) {
@@ -61,7 +61,7 @@ class Transaction {
                 }
             }
         } else {
-            LOGGER.info("Storing chunk #{} for late processing, expected next chunk: #{}, current queue size: {}", dataChunk.chunkNumber, expectedChunkNumber, unprocessedChunks.size());
+            LOGGER.debug("Storing chunk #{} for late processing, expected next chunk: #{}, current queue size: {}", dataChunk.chunkNumber, expectedChunkNumber, unprocessedChunks.size());
             unprocessedChunks.add(dataChunk);
         }
     }
