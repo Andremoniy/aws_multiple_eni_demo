@@ -1,6 +1,6 @@
 package com.github.andremoniy.aws.multiple.eni.demo.daemon;
 
-import com.github.andremoniy.aws.multiple.eni.demo.SenderTools;
+import com.github.andremoniy.aws.multiple.eni.demo.util.SenderTools;
 import com.github.andremoniy.aws.multiple.eni.demo.data.DataChunk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.github.andremoniy.aws.multiple.eni.demo.SenderTools.BLOCK_SIZE;
+import static com.github.andremoniy.aws.multiple.eni.demo.util.SenderTools.BLOCK_SIZE;
 
 class SocketListener implements Runnable {
 

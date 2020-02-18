@@ -1,4 +1,4 @@
-package com.github.andremoniy.aws.multiple.eni.demo;
+package com.github.andremoniy.aws.multiple.eni.demo.util;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
