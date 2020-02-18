@@ -16,24 +16,24 @@ public enum SenderTools {
 
     public static List<NetworkInterface> getNetworkInterfaces() throws SocketException {
         return NetworkInterface
-                    .networkInterfaces()
-                    .filter(networkInterface -> !networkInterface.isVirtual())
-                    .filter(networkInterface -> networkInterface.getName().startsWith("e"))
-                    .collect(Collectors.toUnmodifiableList());
+                .networkInterfaces()
+                .filter(networkInterface -> !networkInterface.isVirtual())
+                .filter(networkInterface -> networkInterface.getName().startsWith("e"))
+                .collect(Collectors.toUnmodifiableList());
     }
 
-    public static int getLastChunkSize(long size, int lastChunkNumber) {
+    public static int getLastChunkSize(final long size, final long lastChunkNumber) {
         return (int) (size - BLOCK_SIZE * (lastChunkNumber - 1));
     }
 
-    public static int getLastChunkNumber(double size) {
-        return (int) Math.ceil(size / BLOCK_SIZE);
+    public static long getLastChunkNumber(final long size) {
+        return (long) Math.ceil((double) size / BLOCK_SIZE);
     }
 
-    public static Optional<InetAddress> getInet4Address(NetworkInterface networkInterface) {
+    public static Optional<InetAddress> getInet4Address(final NetworkInterface networkInterface) {
         return networkInterface
-                        .inetAddresses()
-                        .filter(inetAddress -> inetAddress instanceof Inet4Address)
-                        .findFirst();
+                .inetAddresses()
+                .filter(inetAddress -> inetAddress instanceof Inet4Address)
+                .findFirst();
     }
 }

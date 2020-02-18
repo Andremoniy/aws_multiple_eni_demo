@@ -49,7 +49,7 @@ class SocketListener implements Runnable {
                             continue;
                         }
 
-                        final int chunkNumber = dataInputStream.readInt();
+                        final long chunkNumber = dataInputStream.readLong();
                         final byte[] block = new byte[BLOCK_SIZE];
                         final int bytesRead = dataInputStream.read(block);
                         if (bytesRead != BLOCK_SIZE) {

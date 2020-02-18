@@ -89,8 +89,8 @@ public class SenderClient {
 
             LOGGER.info("A handshake initialised, transactionId: {}", transactionId);
 
-            final int lastChunkNumber = SenderTools.getLastChunkNumber(file.length());
-            for (int chunkNumber = 1; chunkNumber <= lastChunkNumber; chunkNumber++) {
+            final long lastChunkNumber = SenderTools.getLastChunkNumber(file.length());
+            for (long chunkNumber = 1; chunkNumber <= lastChunkNumber; chunkNumber++) {
 
                 byte[] block;
                 if (chunkNumber == lastChunkNumber) {
@@ -181,7 +181,7 @@ public class SenderClient {
                     LOGGER.info("Sending data chunk #{} for transactionId{}", dataChunk.chunkNumber, dataChunk.transactionId);
 
                     dataOutputStream.writeLong(dataChunk.transactionId);
-                    dataOutputStream.writeInt(dataChunk.chunkNumber);
+                    dataOutputStream.writeLong(dataChunk.chunkNumber);
                     dataOutputStream.write(dataChunk.block);
                 }
             } catch (InterruptedException e) {

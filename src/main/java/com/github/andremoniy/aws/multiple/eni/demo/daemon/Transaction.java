@@ -1,7 +1,7 @@
 package com.github.andremoniy.aws.multiple.eni.demo.daemon;
 
-import com.github.andremoniy.aws.multiple.eni.demo.util.SenderTools;
 import com.github.andremoniy.aws.multiple.eni.demo.data.DataChunk;
+import com.github.andremoniy.aws.multiple.eni.demo.util.SenderTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static com.github.andremoniy.aws.multiple.eni.demo.util.SenderTools.BLOCK_SIZE;
 
@@ -22,9 +22,9 @@ class Transaction {
     private final long id;
     private final long size;
     private final String fileName;
-    private final int lastChunkNumber;
+    private final long lastChunkNumber;
     private final BufferedOutputStream bufferedOutputStream;
-    private final AtomicInteger lastWrittenChunkNumber = new AtomicInteger(0);
+    private final AtomicLong lastWrittenChunkNumber = new AtomicLong(0);
 
     private final List<DataChunk> unprocessedChunks = new ArrayList<>();
 
