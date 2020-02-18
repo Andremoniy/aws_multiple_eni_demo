@@ -18,7 +18,7 @@ class TransactionsManager implements Runnable {
 
     private final AtomicLong transactionCounter = new AtomicLong(1);
     private final Map<Long, Transaction> transactionMap = new ConcurrentHashMap<>();
-    private final BlockingQueue<DataChunk> chunksQueue = new ArrayBlockingQueue<>(20);
+    private final BlockingQueue<DataChunk> chunksQueue = new ArrayBlockingQueue<>(100);
 
     private final ExecutorService executorService;
     private final AtomicBoolean running = new AtomicBoolean(true);

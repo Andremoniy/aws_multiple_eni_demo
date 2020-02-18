@@ -32,7 +32,7 @@ public class SenderDaemon {
         final int nThreads = networkInterfaces.size() * 2 + 1;
         final var executorService = new ThreadPoolExecutor(nThreads, nThreads,
                 0L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<>(nThreads * 10)
+                new LinkedBlockingQueue<>(nThreads * 100)
         );
         final TransactionsManager transactionsManager = new TransactionsManager(executorService);
         executorService.submit(transactionsManager);

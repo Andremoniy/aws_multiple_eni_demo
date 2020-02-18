@@ -27,7 +27,7 @@ class Transaction {
     private final BufferedOutputStream bufferedOutputStream;
     private final AtomicLong lastWrittenChunkNumber = new AtomicLong(0);
 
-    private final BlockingQueue<DataChunk> unprocessedChunks = new LinkedBlockingDeque<>(10);
+    private final BlockingQueue<DataChunk> unprocessedChunks = new LinkedBlockingDeque<>(100);
 
     Transaction(final long id, final long size, final String fileName) {
         this.id = id;
