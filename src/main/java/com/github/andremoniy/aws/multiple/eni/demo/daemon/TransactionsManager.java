@@ -4,11 +4,11 @@ import com.github.andremoniy.aws.multiple.eni.demo.data.DataChunk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -20,12 +20,7 @@ class TransactionsManager implements Runnable {
     private final Map<Long, Transaction> transactionMap = new ConcurrentHashMap<>();
     private final BlockingQueue<DataChunk> chunksQueue = new ArrayBlockingQueue<>(100);
 
-    private final ExecutorService executorService;
     private final AtomicBoolean running = new AtomicBoolean(true);
-
-    TransactionsManager(final ExecutorService executorService) {
-        this.executorService = executorService;
-    }
 
     long registerNewTransaction(final long size, final String fileName) {
         final Transaction newTransaction = new Transaction(
@@ -51,12 +46,14 @@ class TransactionsManager implements Runnable {
                 if (transaction == null) {
                     LOGGER.error("Cannot find transaction with id {}", dataChunk.transactionId);
                 } else {
-                    executorService.submit(() -> transaction.processDataChunk(dataChunk));
+                    transaction.processDataChunk(dataChunk);
                 }
             }
         } catch (InterruptedException e) {
             LOGGER.error(e.getMessage(), e);
             Thread.currentThread().interrupt();
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
         }
     }
 }
