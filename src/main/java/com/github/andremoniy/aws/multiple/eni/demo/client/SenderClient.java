@@ -73,6 +73,7 @@ public class SenderClient {
 
         // The main thread sends a handshake
 
+        LOGGER.info("Starting negotiation with the server...§");
         try (var bufferedInputStream = new BufferedInputStream(
                 new FileInputStream(file),
                 SenderTools.BLOCK_SIZE
@@ -138,7 +139,7 @@ public class SenderClient {
     }
 
     private static Loop<String> getHostsLoopFromEC2Instance(final String ec2InstanceId) {
-        Loop<String> hostsLoop;
+        LOGGER.info("Fetching network interfaces for ec2 {}", ec2InstanceId);
         final DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest().withInstanceIds(ec2InstanceId);
         final DescribeInstancesResult describeInstancesResult = AmazonEC2ClientBuilder.defaultClient().describeInstances(describeInstancesRequest);
         final Reservation reservation = describeInstancesResult.getReservations().get(0);
@@ -148,8 +149,9 @@ public class SenderClient {
                 .map(InstanceNetworkInterface::getPrivateIpAddress)
                 .collect(Collectors.toList());
 
-        hostsLoop = new ArrayLoop<>(hosts);
-        return hostsLoop;
+        LOGGER.info("Found following ip addresses on remote EC2 {}:\n{}", ec2InstanceId, hosts);
+
+        return new ArrayLoop<>(hosts);
     }
 
     static class SocketSender implements Runnable {
