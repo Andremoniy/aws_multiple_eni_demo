@@ -19,7 +19,7 @@ public enum SenderTools {
                 .networkInterfaces()
                 .filter(networkInterface -> !networkInterface.isVirtual())
                 .filter(networkInterface -> networkInterface.getName().startsWith("e"))
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toList());
     }
 
     public static int getLastChunkSize(final long size, final long lastChunkNumber) {

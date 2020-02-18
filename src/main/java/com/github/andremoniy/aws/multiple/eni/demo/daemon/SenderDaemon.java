@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.IntStream;
 
 /**
  *
@@ -28,8 +29,13 @@ public class SenderDaemon {
             LOGGER.warn("The mode of fake writing has been enabled (no actual writing on disk will be performed)");
         }
 
+        final Integer limitOfNetworkInterfaces = args.length > 1 ? Integer.parseInt(args[1]) : null;
+
         final List<NetworkInterface> networkInterfaces = SenderTools.getNetworkInterfaces();
 
+        if (limitOfNetworkInterfaces != null) {
+            IntStream.range(0, limitOfNetworkInterfaces).forEach(i -> networkInterfaces.remove(0));
+        }
         LOGGER.info("Found {} network interfaces", networkInterfaces.size());
 
         final var executorService = Executors.newFixedThreadPool(networkInterfaces.size() + 1);
