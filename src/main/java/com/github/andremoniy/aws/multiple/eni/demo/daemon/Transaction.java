@@ -46,7 +46,7 @@ class Transaction {
     void processDataChunk(final DataChunk dataChunk) throws IOException {
         LOGGER.debug("Processing chunk #{} of file {}", dataChunk.chunkNumber, fileName);
         final long expectedChunkNumber = getExpectedChunkNumber();
-        if (dataChunk.chunkNumber == expectedChunkNumber) {
+        if (fakeWritings || dataChunk.chunkNumber == expectedChunkNumber) {
             DataChunk dataChunkToProcess = dataChunk;
 
             while (dataChunkToProcess != null) {
