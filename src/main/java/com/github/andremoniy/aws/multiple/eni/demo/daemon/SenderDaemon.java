@@ -11,8 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -27,7 +29,11 @@ public class SenderDaemon {
 
         LOGGER.info("Found {} network interfaces", networkInterfaces.size());
 
-        final var executorService = Executors.newFixedThreadPool(networkInterfaces.size() * 2 + 1);
+        final int nThreads = networkInterfaces.size() * 2 + 1;
+        final var executorService = new ThreadPoolExecutor(nThreads, nThreads,
+                0L, TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<>(nThreads * 10)
+        );
         final TransactionsManager transactionsManager = new TransactionsManager(executorService);
         executorService.submit(transactionsManager);
 
