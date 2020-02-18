@@ -48,10 +48,10 @@ class Transaction {
             DataChunk dataChunkToProcess = dataChunk;
 
             while (dataChunkToProcess != null) {
-                LOGGER.info("Writing chunk #{} to disk", dataChunk.chunkNumber);
-                writeChunkToDisk(dataChunk);
-                lastWrittenChunkNumber.set(dataChunk.chunkNumber);
-                if (dataChunk.chunkNumber == lastChunkNumber) {
+                LOGGER.info("Writing chunk #{} to disk", dataChunkToProcess.chunkNumber);
+                writeChunkToDisk(dataChunkToProcess);
+                lastWrittenChunkNumber.set(dataChunkToProcess.chunkNumber);
+                if (dataChunkToProcess.chunkNumber == lastChunkNumber) {
                     bufferedOutputStream.flush();
                     bufferedOutputStream.close();
                     LOGGER.info("Finished transaction {} for file {}", id, fileName);
