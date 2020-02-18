@@ -43,7 +43,7 @@ class Transaction {
         }
     }
 
-    synchronized void processDataChunk(final DataChunk dataChunk) throws IOException {
+    void processDataChunk(final DataChunk dataChunk) throws IOException {
         LOGGER.debug("Processing chunk #{} of file {}", dataChunk.chunkNumber, fileName);
         final long expectedChunkNumber = getExpectedChunkNumber();
         if (dataChunk.chunkNumber == expectedChunkNumber) {

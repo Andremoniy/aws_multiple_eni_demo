@@ -32,3 +32,34 @@ A demo testing utilisation of multiple ENIs to transfer and receive data
 2020-02-18 13:22:48 INFO  [main] SenderClient:121 - Uploading time: 14388086326 ns, 14 s
 2020-02-18 13:22:48 INFO  [main] SenderClient:124 - Throughput: 569.359942273674 MBs, 0.5560155686266348 GBs
 ```
+
+### Without actual writings ("fake writings")
+```
+1 ENI:
+
+1)
+2020-02-18 13:31:48 INFO  [main] SenderClient:121 - Uploading time: 11262873654 ns, 11 s
+2020-02-18 13:31:48 INFO  [main] SenderClient:124 - Throughput: 727.3454583316415 MBs, 0.7102982991519936 GBs
+
+2)
+2020-02-18 13:32:27 INFO  [main] SenderClient:121 - Uploading time: 11043020879 ns, 11 s
+2020-02-18 13:32:27 INFO  [main] SenderClient:124 - Throughput: 741.825999403691 MBs, 0.724439452542667 GBs
+
+3) 
+2020-02-18 13:32:49 INFO  [main] SenderClient:121 - Uploading time: 11151368954 ns, 11 s
+2020-02-18 13:32:49 INFO  [main] SenderClient:124 - Throughput: 734.6183265742926 MBs, 0.7174007095452076 GBs
+
+2 ENIs: 
+
+1)
+2020-02-18 13:33:53 INFO  [main] SenderClient:121 - Uploading time: 13431038791 ns, 13 s
+2020-02-18 13:33:53 INFO  [main] SenderClient:124 - Throughput: 609.9304847134665 MBs, 0.5956352389779946 GBs
+
+2)
+2020-02-18 13:34:20 INFO  [main] SenderClient:121 - Uploading time: 10636757617 ns, 10 s
+2020-02-18 13:34:20 INFO  [main] SenderClient:124 - Throughput: 770.1595067755693 MBs, 0.7521088933355169 GBs
+
+3) 
+2020-02-18 13:34:46 INFO  [main] SenderClient:121 - Uploading time: 11161117426 ns, 11 s
+2020-02-18 13:34:46 INFO  [main] SenderClient:124 - Throughput: 733.9766877567837 MBs, 0.7167741091374841 GBs
+```
