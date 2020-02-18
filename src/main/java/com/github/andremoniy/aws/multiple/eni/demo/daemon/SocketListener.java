@@ -19,7 +19,7 @@ import static com.github.andremoniy.aws.multiple.eni.demo.util.SenderTools.BLOCK
 class SocketListener implements Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SocketListener.class);
-    
+
     private final TransactionsManager transactionsManager;
     private final InetAddress firstInet4Address;
     private final AtomicBoolean running = new AtomicBoolean(true);
@@ -51,10 +51,11 @@ class SocketListener implements Runnable {
 
                         final long chunkNumber = dataInputStream.readLong();
                         final byte[] block = new byte[BLOCK_SIZE];
-                        final int bytesRead = dataInputStream.read(block);
-                        if (bytesRead != BLOCK_SIZE) {
-                            LOGGER.warn("Broken chunk of data (#{}, txID: {}), expected: {}, received: {}", chunkNumber, transactionId, BLOCK_SIZE, bytesRead);
-                        }
+
+                        int bytesRead = 0;
+                        do {
+                            bytesRead += dataInputStream.read(block, bytesRead, BLOCK_SIZE - bytesRead);
+                        } while (bytesRead != BLOCK_SIZE);
 
                         try {
                             transactionsManager.process(new DataChunk(transactionId, chunkNumber, block));
