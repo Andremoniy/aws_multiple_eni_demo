@@ -90,9 +90,10 @@ public class SenderClient {
             LOGGER.info("A handshake initialised, transactionId: {}", transactionId);
 
             final long lastChunkNumber = SenderTools.getLastChunkNumber(file.length());
+            LOGGER.info("File will be split on {} chunks", lastChunkNumber);
             for (long chunkNumber = 1; chunkNumber <= lastChunkNumber; chunkNumber++) {
 
-                byte[] block;
+                final byte[] block;
                 if (chunkNumber == lastChunkNumber) {
                     block = new byte[SenderTools.getLastChunkSize(file.length(), lastChunkNumber)];
                 } else {
@@ -178,7 +179,7 @@ public class SenderClient {
                         LOGGER.info("Received end of queue marker, terminating socker sender for {}", firstInet4Address);
                         break;
                     }
-                    LOGGER.info("Sending data chunk #{} for transactionId{}", dataChunk.chunkNumber, dataChunk.transactionId);
+                    LOGGER.info("Sending data chunk #{}", dataChunk.chunkNumber);
 
                     dataOutputStream.writeLong(dataChunk.transactionId);
                     dataOutputStream.writeLong(dataChunk.chunkNumber);

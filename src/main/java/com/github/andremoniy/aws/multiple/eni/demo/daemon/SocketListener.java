@@ -53,7 +53,7 @@ class SocketListener implements Runnable {
                         final byte[] block = new byte[BLOCK_SIZE];
                         final int bytesRead = dataInputStream.read(block);
                         if (bytesRead != BLOCK_SIZE) {
-                            LOGGER.warn("Broken chunk of data (#{}), expected: {}, received: {}", chunkNumber, BLOCK_SIZE, bytesRead);
+                            LOGGER.warn("Broken chunk of data (#{}, txID: {}), expected: {}, received: {}", chunkNumber, transactionId, BLOCK_SIZE, bytesRead);
                         }
 
                         try {
