@@ -9,9 +9,9 @@ import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static com.github.andremoniy.aws.multiple.eni.demo.util.SenderTools.BLOCK_SIZE;
@@ -27,7 +27,7 @@ class Transaction {
     private final BufferedOutputStream bufferedOutputStream;
     private final AtomicLong lastWrittenChunkNumber = new AtomicLong(0);
 
-    private final BlockingQueue<DataChunk> unprocessedChunks = new LinkedBlockingDeque<>(100);
+    private final Set<DataChunk> unprocessedChunks = new HashSet<>();
 
     Transaction(final long id, final long size, final String fileName) {
         this.id = id;
@@ -41,7 +41,7 @@ class Transaction {
         }
     }
 
-    synchronized boolean processDataChunk(final DataChunk dataChunk) throws IOException {
+    synchronized void processDataChunk(final DataChunk dataChunk) throws IOException {
         LOGGER.info("Processing chunk #{} of file {}", dataChunk.chunkNumber, fileName);
         final long expectedChunkNumber = getExpectedChunkNumber();
         if (dataChunk.chunkNumber == expectedChunkNumber) {
@@ -55,21 +55,15 @@ class Transaction {
                     bufferedOutputStream.flush();
                     bufferedOutputStream.close();
                     LOGGER.info("Finished transaction {} for file {}", id, fileName);
-                    return true;
+                    return;
                 } else {
                     dataChunkToProcess = findNextDataChunk();
                 }
             }
         } else {
-            LOGGER.info("Storing chunk #{} for late processing, expected next chunk: #{}", dataChunk.chunkNumber, expectedChunkNumber);
-            try {
-                unprocessedChunks.put(dataChunk);
-            } catch (InterruptedException e) {
-                LOGGER.error(e.getMessage(), e);
-                Thread.currentThread().interrupt();
-            }
+            LOGGER.info("Storing chunk #{} for late processing, expected next chunk: #{}, current queue size: {}", dataChunk.chunkNumber, expectedChunkNumber, unprocessedChunks.size());
+            unprocessedChunks.add(dataChunk);
         }
-        return false;
     }
 
     private long getExpectedChunkNumber() {
