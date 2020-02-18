@@ -56,7 +56,7 @@ public class SenderClient {
         }
 
         final List<NetworkInterface> networkInterfaces = SenderTools.getNetworkInterfaces();
-        LOGGER.info("Found {} network interfaces", networkInterfaces.size());
+        LOGGER.info("Found {} local network interfaces: {}", networkInterfaces.size(), networkInterfaces);
         final ExecutorService executorService = Executors.newFixedThreadPool(networkInterfaces.size());
         final BlockingQueue<DataChunk> queue = new ArrayBlockingQueue<>(100);
 

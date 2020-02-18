@@ -9,11 +9,9 @@ import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static com.github.andremoniy.aws.multiple.eni.demo.util.SenderTools.BLOCK_SIZE;
@@ -29,7 +27,7 @@ class Transaction {
     private final BufferedOutputStream bufferedOutputStream;
     private final AtomicLong lastWrittenChunkNumber = new AtomicLong(0);
 
-    private final Set<DataChunk> unprocessedChunks = new HashSet<>();  // ToDo: a potential place for OOM Java heap space
+    private final BlockingQueue<DataChunk> unprocessedChunks = new LinkedBlockingDeque<>(10);
 
     Transaction(final long id, final long size, final String fileName) {
         this.id = id;
@@ -61,7 +59,12 @@ class Transaction {
                 }
             }
         } else {
-            unprocessedChunks.add(dataChunk);
+            try {
+                unprocessedChunks.put(dataChunk);
+            } catch (InterruptedException e) {
+                LOGGER.error(e.getMessage(), e);
+                Thread.currentThread().interrupt();
+            }
         }
         return false;
     }
