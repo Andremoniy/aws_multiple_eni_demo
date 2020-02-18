@@ -6,9 +6,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -18,12 +18,12 @@ class TransactionsManager implements Runnable {
 
     private final AtomicLong transactionCounter = new AtomicLong(1);
     private final Map<Long, Transaction> transactionMap = new ConcurrentHashMap<>();
-    private final BlockingQueue<DataChunk> chunksQueue = new ArrayBlockingQueue<>(100);
+    private final BlockingQueue<DataChunk> chunksQueue = new LinkedBlockingDeque<>();
 
     private final AtomicBoolean running = new AtomicBoolean(true);
     private final boolean fakeWritings;
 
-    public TransactionsManager(final boolean fakeWritings) {
+    TransactionsManager(final boolean fakeWritings) {
         this.fakeWritings = fakeWritings;
     }
 
